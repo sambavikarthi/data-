@@ -3,28 +3,23 @@ pipeline {
 
     stages {
 
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
                 git branch: 'main',
                 url: 'https://github.com/sambavikarthi/dv.git'
             }
         }
 
-        stage('Stop Old Containers') {
+        stage('Build & Run Docker') {
             steps {
-                sh 'docker compose down || true'
+                bat 'docker compose down || exit 0'
+                bat 'docker compose up -d --build'
             }
         }
 
-        stage('Build & Run Containers') {
+        stage('Verify') {
             steps {
-                sh 'docker compose up -d --build'
-            }
-        }
-
-        stage('Verify Running Containers') {
-            steps {
-                sh 'docker ps'
+                bat 'docker ps'
             }
         }
     }
